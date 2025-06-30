@@ -311,6 +311,7 @@ def pay_direct():
         'content-type': 'application/json',
         'authorization': f'Basic {PAYMONGO_SECRET_KEY}'
     }
+    description = "Transmutation Method Checkout: Grab 'The Transmutation Method' Program Today At Pre-Launch Price of only PHP1,499 (50% OFF)! Once you complete payment, you will be led to the link to access our modules + community!"
     data = {
         "data": {
             "attributes": {
@@ -323,13 +324,13 @@ def pay_direct():
                         "amount": amount,
                         "name": "Transmutation Method",
                         "quantity": 1,
-                        "description": "Transmutation Method Registration"
+                        "description": description
                     }
                 ],
                 "payment_method_types": [
                     "card", "gcash", "grab_pay", "paymaya", "atome"
                 ],
-                "description": "Transmutation Method Registration",
+                "description": description,
                 "reference_number": None,
                 "success_url": THANK_YOU_URL,
                 "cancel_url": ERROR_URL
