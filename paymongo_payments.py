@@ -299,14 +299,14 @@ def paymongo_webhook():
 
 @app.route('/pay')
 def pay_direct():
-    amount = 2000  # ₱20 in centavos for testing (minimum allowed)
+    amount = 149900  # ₱1,499 in centavos
     url = 'https://api.paymongo.com/v1/checkout_sessions'
     headers = {
         'accept': 'application/json',
         'content-type': 'application/json',
         'authorization': f'Basic {PAYMONGO_SECRET_KEY}'
     }
-    description = "Transmutation Method Checkout: Grab Our Program Today for only PHP1,499 (50% OFF)! Once you complete payment, you will be led to the link to access our modules + community!"
+    description = "Transmutation Method Checkout: Grab 'The Transmutation Method' Program Today At Pre-Launch Price of only PHP1,499 (50% OFF)! Once you complete payment, you will be led to the link to access our modules + community!"
     data = {
         "data": {
             "attributes": {
