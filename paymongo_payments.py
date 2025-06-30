@@ -352,16 +352,26 @@ def log_payment_to_sheets(attributes):
             return
         client = gspread.service_account(filename=GOOGLE_SHEETS_CREDS)
         sheet = client.open_by_key(SPREADSHEET_ID).sheet1
-        # Try to get email and phone from billing, fallback to metadata
+
         billing = attributes.get('billing', {})
-        metadata = attributes.get('metadata', {}) or {}
-        name = metadata.get('name', '')
-        email = billing.get('email') or metadata.get('email', '')
+        name = billing.get('name', '')
+        email = billing.get('email', '')
         phone = billing.get('phone', '')
         amount = attributes.get('amount', 0) / 100
         status = attributes.get('status', '')
         paid_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        sheet.append_row([name, email, phone, amount, status, paid_at])
+        payment_method = attributes.get('source', {}).get('type', '')
+        last4 = attributes.get('source', {}).get('last4', '')
+        payment_id = attributes.get('id', '')
+        description = attributes.get('description', '')
+        reference_number = attributes.get('external_reference_number', '')
+        created_at = attributes.get('created_at', '')
+        statement_descriptor = attributes.get('statement_descriptor', '')
+
+        sheet.append_row([
+            name, email, phone, amount, status, paid_at, payment_method, last4,
+            payment_id, description, reference_number, created_at, statement_descriptor
+        ])
     except Exception as e:
         print(f"Failed to log payment: {e}")
 
