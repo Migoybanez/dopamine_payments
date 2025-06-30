@@ -1,15 +1,20 @@
+# Trigger redeploy on Railway
+
 from flask import Flask, render_template_string, request, redirect, url_for, jsonify
 import requests
 import os
 import gspread
 from datetime import datetime
+import json
+
+# Triggering redeploy on Railway
 
 app = Flask(__name__)
 
 # PayMongo Secret Key (set as environment variable for security)
 PAYMONGO_SECRET_KEY = os.environ.get('PAYMONGO_SECRET_KEY')
 # Google Sheets credentials file path (set as environment variable)
-GOOGLE_SHEETS_CREDS = os.environ.get('GOOGLE_SHEETS_CREDS', 'credentials.json')
+GOOGLE_SHEETS_CREDS = os.environ.get('GOOGLE_SHEETS_CREDS', 'pmcredentials.json')
 # Google Sheets spreadsheet ID
 SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
 
@@ -212,6 +217,14 @@ PAYMENT_FORM_HTML = '''
 </html>
 '''
 
+def write_pm_credentials():
+    creds_json = os.environ.get('PM_CREDENTIALS_JSON')
+    if creds_json:
+        with open('pmcredentials.json', 'w') as f:
+            f.write(creds_json)
+
+write_pm_credentials()
+
 @app.route('/')
 def payment_form():
     return render_template_string(PAYMENT_FORM_HTML)
@@ -268,19 +281,26 @@ def create_payment():
 
 @app.route('/webhook', methods=['POST'])
 def paymongo_webhook():
-    payload = request.json
-    if not isinstance(payload, dict):
-        return jsonify({'status': 'no payload'}), 400
-    data = payload.get('data')
-    if not isinstance(data, dict):
-        return jsonify({'status': 'no data'}), 400
-    attributes = data.get('attributes') or {}
-    event_type = attributes.get('type', '')
-    payment_data = attributes.get('data', {})
-    if event_type == 'payment.paid':
-        # Log to Google Sheets
-        log_payment_to_sheets(payment_data)
-    return jsonify({'status': 'ok'})
+    try:
+        payload = request.json
+        if not isinstance(payload, dict):
+            print("Invalid payload:", payload)
+            return jsonify({'status': 'ok'})  # Always return 200
+
+        data = payload.get('data')
+        if not isinstance(data, dict):
+            print("No data in payload:", payload)
+            return jsonify({'status': 'ok'})  # Always return 200
+
+        attributes = data.get('attributes') or {}
+        event_type = attributes.get('type', '')
+        payment_data = attributes.get('data', {})
+        if event_type == 'payment.paid':
+            # Log to Google Sheets
+            log_payment_to_sheets(payment_data)
+    except Exception as e:
+        print(f"Webhook error: {e}")
+    return jsonify({'status': 'ok'})  # Always return 200
 
 @app.route('/pay')
 def pay_direct():
@@ -349,4 +369,4 @@ def log_payment_to_sheets(payment_data):
         print(f"Failed to log payment: {e}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
