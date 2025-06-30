@@ -291,9 +291,8 @@ def paymongo_webhook():
         event_type = attributes.get('type', '') if isinstance(attributes, dict) else ''
         payment_data = attributes.get('data') if isinstance(attributes, dict) else None
         print("Payment data:", payment_data)
-        if event_type == 'payment.paid':
-            # Log to Google Sheets
-            log_payment_to_sheets(payment_data)
+        if event_type == 'payment.paid' and isinstance(payment_data, dict):
+            log_payment_to_sheets(payment_data.get('attributes', {}))
     except Exception as e:
         print(f"Webhook error: {e}")
     return jsonify({'status': 'ok'})  # Always return 200
@@ -343,21 +342,19 @@ def pay_direct():
         print("PayMongo Checkout API error:", response.status_code, response.text)
         return redirect(ERROR_URL)
 
-def log_payment_to_sheets(payment_data):
+def log_payment_to_sheets(attributes):
     try:
-        if not payment_data:
-            print("No payment data received.")
+        if not attributes:
+            print("No payment attributes received.")
             return
         if not SPREADSHEET_ID:
             print("SPREADSHEET_ID environment variable is not set.")
             return
         client = gspread.service_account(filename=GOOGLE_SHEETS_CREDS)
         sheet = client.open_by_key(SPREADSHEET_ID).sheet1
-        # Extract details
-        attributes = payment_data.get('attributes', {})
         # Try to get email and phone from billing, fallback to metadata
         billing = attributes.get('billing', {})
-        metadata = attributes.get('metadata', {})
+        metadata = attributes.get('metadata', {}) or {}
         name = metadata.get('name', '')
         email = billing.get('email') or metadata.get('email', '')
         phone = billing.get('phone', '')
