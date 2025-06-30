@@ -281,20 +281,16 @@ def create_payment():
 
 @app.route('/webhook', methods=['POST'])
 def paymongo_webhook():
+    write_pm_credentials()  # Ensure credentials file exists
     try:
         payload = request.json
-        if not isinstance(payload, dict):
-            print("Invalid payload:", payload)
-            return jsonify({'status': 'ok'})  # Always return 200
-
-        data = payload.get('data')
-        if not isinstance(data, dict):
-            print("No data in payload:", payload)
-            return jsonify({'status': 'ok'})  # Always return 200
-
-        attributes = data.get('attributes') or {}
-        event_type = attributes.get('type', '')
-        payment_data = attributes.get('data', {})
+        print("Webhook payload:", payload)
+        data = payload.get('data') if isinstance(payload, dict) else None
+        attributes = data.get('attributes') if isinstance(data, dict) else None
+        print("Attributes:", attributes)
+        event_type = attributes.get('type', '') if isinstance(attributes, dict) else ''
+        payment_data = attributes.get('data') if isinstance(attributes, dict) else None
+        print("Payment data:", payment_data)
         if event_type == 'payment.paid':
             # Log to Google Sheets
             log_payment_to_sheets(payment_data)
@@ -349,6 +345,9 @@ def pay_direct():
 
 def log_payment_to_sheets(payment_data):
     try:
+        if not payment_data:
+            print("No payment data received.")
+            return
         if not SPREADSHEET_ID:
             print("SPREADSHEET_ID environment variable is not set.")
             return
