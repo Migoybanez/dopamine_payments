@@ -32,7 +32,7 @@ write_pm_credentials()
 
 @app.route('/pay')
 def pay_direct():
-    amount = 2499  # ₱2,499 in centavos
+    amount = 249900  # ₱2,499 in centavos
     url = 'https://api.paymongo.com/v1/checkout_sessions'
     headers = {
         'accept': 'application/json',
