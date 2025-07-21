@@ -32,14 +32,14 @@ write_pm_credentials()
 
 @app.route('/pay')
 def pay_direct():
-    amount = 249900  # ₱2,499 in centavos
+    amount = 2499  # ₱2,499 in centavos
     url = 'https://api.paymongo.com/v1/checkout_sessions'
     headers = {
         'accept': 'application/json',
         'content-type': 'application/json',
         'authorization': f'Basic {PAYMONGO_SECRET_KEY}'
     }
-    description = "Transmutation Method Checkout: Grab Our Program Today for only PHP2,499 (P500 OFF)! Once you complete payment, you will be led to the link to access our modules + community!"
+    description = "Grab Our Program Today for only PHP2,499 (P500 OFF)! Once you complete payment, you will be led to the link to access our modules + community!"
     data = {
         "data": {
             "attributes": {
