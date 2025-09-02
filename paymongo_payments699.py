@@ -19,7 +19,7 @@ GOOGLE_SHEETS_CREDS = os.environ.get('GOOGLE_SHEETS_CREDS', 'pmcredentials.json'
 SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
 
 # Thank you and error page URLs
-THANK_YOU_URL = 'https://www.transmutation-method.com/1000-prompts'
+THANK_YOU_URL = 'https://www.transmutation-method.com/complete'
 ERROR_URL = 'https://www.transmutation-method.com/payment-error'
 
 def write_pm_credentials():
