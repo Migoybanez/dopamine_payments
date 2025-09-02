@@ -39,7 +39,7 @@ def pay_direct():
         'content-type': 'application/json',
         'authorization': f'Basic {PAYMONGO_SECRET_KEY}'
     }
-    description = "Grab 6-Figure Sprint At Only P699 Today! Once you complete payment, you will be led to the link to access our modules + community!"
+    description = "Grab Inner Circle Membership Today At Only P9997 Today! Once you complete payment, you will be led to the link to access our modules + community!"
     data = {
         "data": {
             "attributes": {
