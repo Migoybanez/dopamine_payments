@@ -32,14 +32,14 @@ write_pm_credentials()
 
 @app.route('/pay')
 def pay_direct():
-    amount = 999700  # ₱9997 in centavos
+    amount = 499700  # ₱4997 in centavos
     url = 'https://api.paymongo.com/v1/checkout_sessions'
     headers = {
         'accept': 'application/json',
         'content-type': 'application/json',
         'authorization': f'Basic {PAYMONGO_SECRET_KEY}'
     }
-    description = "Grab Inner Circle Membership Today At Only P9997 Today! Once you complete payment, you will be led to the link to access our modules + community!"
+    description = "Grab Inner Circle Membership Today At Only P4997 Today! Once you complete payment, you will be led to the link to access our modules + community!"
     data = {
         "data": {
             "attributes": {
